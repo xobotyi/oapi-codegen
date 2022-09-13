@@ -16,12 +16,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/deepmap/oapi-codegen/internal/test/strict-server/chi"
-	api3 "github.com/deepmap/oapi-codegen/internal/test/strict-server/client"
-	api4 "github.com/deepmap/oapi-codegen/internal/test/strict-server/echo"
-	api2 "github.com/deepmap/oapi-codegen/internal/test/strict-server/gin"
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
-	"github.com/deepmap/oapi-codegen/pkg/testutil"
+	"github.com/xobotyi/oapi-codegen/internal/test/strict-server/chi"
+	api3 "github.com/xobotyi/oapi-codegen/internal/test/strict-server/client"
+	api4 "github.com/xobotyi/oapi-codegen/internal/test/strict-server/echo"
+	api2 "github.com/xobotyi/oapi-codegen/internal/test/strict-server/gin"
+	"github.com/xobotyi/oapi-codegen/pkg/runtime"
+	"github.com/xobotyi/oapi-codegen/pkg/testutil"
 )
 
 func TestChiServer(t *testing.T) {

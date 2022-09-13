@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/deepmap/oapi-codegen/pkg/types"
+	"github.com/xobotyi/oapi-codegen/pkg/types"
 )
 
 func marshalDeepObject(in interface{}, path []string) ([]string, error) {
@@ -193,7 +193,7 @@ func fieldIndicesByJsonTag(i interface{}) (map[string]int, error) {
 }
 
 func assignPathValues(dst interface{}, pathValues fieldOrValue) error {
-	//t := reflect.TypeOf(dst)
+	// t := reflect.TypeOf(dst)
 	v := reflect.ValueOf(dst)
 
 	iv := reflect.Indirect(v)
