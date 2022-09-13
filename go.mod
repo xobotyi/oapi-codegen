@@ -1,4 +1,6 @@
-module github.com/deepmap/oapi-codegen
+module github.com/xobotyi/oapi-codegen
+
+replace github.com/deepmap/oapi-codegen => ./
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0
