@@ -93,13 +93,15 @@ func (p Property) GoFieldName() string {
 
 func (p Property) GoTypeDef() string {
 	typeDef := p.Schema.TypeDecl()
-	if !p.Schema.SkipOptionalPointer &&
-		(!p.Required || p.Nullable ||
-			(p.ReadOnly && (!p.Required || !globalState.options.Compatibility.DisableRequiredReadOnlyAsPointer)) ||
-			p.WriteOnly) {
 
+	if p.Schema.SkipOptionalPointer {
+		return typeDef
+	}
+
+	if p.Nullable {
 		typeDef = "*" + typeDef
 	}
+
 	return typeDef
 }
 
@@ -599,7 +601,7 @@ func GenFieldsFromProperties(props []Property) []string {
 
 		fieldTags := make(map[string]string)
 
-		if (p.Required && !p.ReadOnly && !p.WriteOnly) || p.Nullable || !overrideOmitEmpty || (p.Required && p.ReadOnly && globalState.options.Compatibility.DisableRequiredReadOnlyAsPointer) {
+		if p.Required || !overrideOmitEmpty {
 			fieldTags["json"] = p.JsonFieldName
 			if p.NeedsFormTag {
 				fieldTags["form"] = p.JsonFieldName
