@@ -165,11 +165,16 @@ func DescribeParameters(params openapi3.Parameters, path []string) ([]ParameterD
 				param.Name, err)
 		}
 
+		nullable := false
+		if goType.OAPISchema != nil {
+			nullable = goType.OAPISchema.Nullable
+		}
+
 		pd := ParameterDefinition{
 			ParamName: param.Name,
 			In:        param.In,
 			Required:  param.Required,
-			Nullable:  goType.OAPISchema.Nullable,
+			Nullable:  nullable,
 			Spec:      param,
 			Schema:    goType,
 		}
