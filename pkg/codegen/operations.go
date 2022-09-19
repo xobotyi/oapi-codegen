@@ -24,6 +24,7 @@ import (
 	"unicode"
 
 	"github.com/getkin/kin-openapi/openapi3"
+
 	"github.com/xobotyi/oapi-codegen/pkg/util"
 )
 
@@ -31,6 +32,7 @@ type ParameterDefinition struct {
 	ParamName string // The original json parameter name, eg param_name
 	In        string // Where the parameter is defined - path, header, cookie, query
 	Required  bool   // Is this a required parameter?
+	Nullable  bool   // Is this a nullable parameter?
 	Spec      *openapi3.Parameter
 	Schema    Schema
 }
@@ -135,7 +137,7 @@ func (pd ParameterDefinition) GoName() string {
 }
 
 func (pd ParameterDefinition) IndirectOptional() bool {
-	return !pd.Required && !pd.Schema.SkipOptionalPointer
+	return !pd.Schema.OAPISchema.Nullable || !pd.Schema.SkipOptionalPointer
 }
 
 type ParameterDefinitions []ParameterDefinition
@@ -167,6 +169,7 @@ func DescribeParameters(params openapi3.Parameters, path []string) ([]ParameterD
 			ParamName: param.Name,
 			In:        param.In,
 			Required:  param.Required,
+			Nullable:  goType.OAPISchema.Nullable,
 			Spec:      param,
 			Schema:    goType,
 		}

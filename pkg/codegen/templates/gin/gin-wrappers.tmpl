@@ -54,7 +54,7 @@ func (siw *ServerInterfaceWrapper) {{$opid}}(c *gin.Context) {
         if paramValue := c.Query("{{.ParamName}}"); paramValue != "" {
 
         {{if .IsPassThrough}}
-          params.{{.GoName}} = {{if not .Required}}&{{end}}paramValue
+          params.{{.GoName}} = {{if .Nullable}}&{{end}}paramValue
         {{end}}
 
         {{if .IsJson}}
@@ -65,7 +65,7 @@ func (siw *ServerInterfaceWrapper) {{$opid}}(c *gin.Context) {
             return
           }
 
-          params.{{.GoName}} = {{if not .Required}}&{{end}}value
+          params.{{.GoName}} = {{if .Nullable}}&{{end}}value
         {{end}}
         }{{if .Required}} else {
             c.JSON(http.StatusBadRequest, gin.H{"msg": "Query argument {{.ParamName}} is required, but not found"})
@@ -94,7 +94,7 @@ func (siw *ServerInterfaceWrapper) {{$opid}}(c *gin.Context) {
           }
 
         {{if .IsPassThrough}}
-          params.{{.GoName}} = {{if not .Required}}&{{end}}valueList[0]
+          params.{{.GoName}} = {{if .Nullable}}&{{end}}valueList[0]
         {{end}}
 
         {{if .IsJson}}
@@ -113,7 +113,7 @@ func (siw *ServerInterfaceWrapper) {{$opid}}(c *gin.Context) {
           }
         {{end}}
 
-          params.{{.GoName}} = {{if not .Required}}&{{end}}{{.GoName}}
+          params.{{.GoName}} = {{if .Nullable}}&{{end}}{{.GoName}}
 
         } {{if .Required}}else {
             c.JSON(http.StatusBadRequest, gin.H{"msg": fmt.Sprintf("Header parameter {{.ParamName}} is required, but not found: %s", err)})
@@ -129,7 +129,7 @@ func (siw *ServerInterfaceWrapper) {{$opid}}(c *gin.Context) {
       if cookie, err = c.Cookie("{{.ParamName}}"); err == nil {
 
       {{- if .IsPassThrough}}
-        params.{{.GoName}} = {{if not .Required}}&{{end}}cookie.Value
+        params.{{.GoName}} = {{if .Nullable}}&{{end}}cookie.Value
       {{end}}
 
       {{- if .IsJson}}
@@ -147,7 +147,7 @@ func (siw *ServerInterfaceWrapper) {{$opid}}(c *gin.Context) {
           return
         }
 
-        params.{{.GoName}} = {{if not .Required}}&{{end}}value
+        params.{{.GoName}} = {{if .Nullable}}&{{end}}value
       {{end}}
 
       {{- if .IsStyled}}
@@ -157,7 +157,7 @@ func (siw *ServerInterfaceWrapper) {{$opid}}(c *gin.Context) {
           c.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid format for parameter {{.ParamName}}: %s"})
           return
         }
-        params.{{.GoName}} = {{if not .Required}}&{{end}}value
+        params.{{.GoName}} = {{if .Nullable}}&{{end}}value
       {{end}}
 
       }
