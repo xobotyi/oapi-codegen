@@ -457,6 +457,8 @@ func oapiSchemaToGoType(schema *openapi3.Schema, path []string, outSchema *Schem
 	f := schema.Format
 	t := schema.Type
 
+	isPtr := schema.Nullable
+
 	switch t {
 	case "array":
 		// For arrays, we'll get the type of the Items and throw a
@@ -493,6 +495,7 @@ func oapiSchemaToGoType(schema *openapi3.Schema, path []string, outSchema *Schem
 		outSchema.AdditionalTypes = arrayType.AdditionalTypes
 		outSchema.Properties = arrayType.Properties
 		outSchema.DefineViaAlias = true
+		outSchema.SkipOptionalPointer = true
 	case "integer":
 		// We default to int if format doesn't ask for something else.
 		if f == "int64" {
@@ -563,6 +566,11 @@ func oapiSchemaToGoType(schema *openapi3.Schema, path []string, outSchema *Schem
 	default:
 		return fmt.Errorf("unhandled Schema type: %s", t)
 	}
+
+	if isPtr && !outSchema.SkipOptionalPointer {
+		outSchema.GoType = "*" + outSchema.GoType
+	}
+
 	return nil
 }
 
