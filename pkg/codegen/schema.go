@@ -221,10 +221,17 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 			return Schema{}, fmt.Errorf("error turning reference (%s) into a Go type: %s",
 				sref.Ref, err)
 		}
+
+		skipOptionalPointer := false
+		if schema.Type == "array" || schema.AdditionalProperties != nil {
+			skipOptionalPointer = true
+		}
+
 		return Schema{
-			GoType:         refType,
-			Description:    schema.Description,
-			DefineViaAlias: true,
+			GoType:              refType,
+			Description:         schema.Description,
+			DefineViaAlias:      true,
+			SkipOptionalPointer: skipOptionalPointer,
 		}, nil
 	}
 
@@ -316,6 +323,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 				}
 				outSchema.AdditionalPropertiesType = &additionalSchema
 				outSchema.AdditionalTypes = append(outSchema.AdditionalTypes, additionalSchema.AdditionalTypes...)
+				outSchema.SkipOptionalPointer = true
 			}
 
 			// If the schema has no properties, and only additional properties, we will
@@ -364,6 +372,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 				if p.Value != nil {
 					description = p.Value.Description
 				}
+
 				prop := Property{
 					JsonFieldName:  pName,
 					Schema:         pSchema,
@@ -456,6 +465,7 @@ func oapiSchemaToGoType(schema *openapi3.Schema, path []string, outSchema *Schem
 		if err != nil {
 			return fmt.Errorf("error generating type for array: %w", err)
 		}
+
 		if (arrayType.HasAdditionalProperties || len(arrayType.UnionElements) != 0) && arrayType.RefType == "" {
 			// If we have items which have additional properties or union values,
 			// but are not a pre-defined type, we need to define a type
@@ -472,8 +482,14 @@ func oapiSchemaToGoType(schema *openapi3.Schema, path []string, outSchema *Schem
 
 			arrayType.RefType = typeName
 		}
+
+		itemPrefix := ""
+		if schema.Nullable {
+			itemPrefix = "*"
+		}
+
 		outSchema.ArrayType = &arrayType
-		outSchema.GoType = "[]" + arrayType.TypeDecl()
+		outSchema.GoType = "[]" + itemPrefix + arrayType.TypeDecl()
 		outSchema.AdditionalTypes = arrayType.AdditionalTypes
 		outSchema.Properties = arrayType.Properties
 		outSchema.DefineViaAlias = true

@@ -30,6 +30,7 @@ import (
 )
 
 // Embed the templates directory
+//
 //go:embed templates
 var templates embed.FS
 
@@ -387,6 +388,7 @@ func GenerateTypeDefinitions(t *template.Template, swagger *openapi3.T, ops []Op
 	}
 
 	typeDefinitions := strings.Join([]string{enumsOut, typesOut, operationsOut, allOfBoilerplate, unionBoilerplate}, "")
+
 	return typeDefinitions, nil
 }
 
